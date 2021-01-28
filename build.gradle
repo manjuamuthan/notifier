@@ -1,0 +1,38 @@
+plugins {
+	id 'org.springframework.boot' version '2.4.2'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'com.google.cloud.tools.jib' version '1.6.1'
+	id 'java'
+}
+apply plugin: 'com.google.cloud.tools.jib'
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '8'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.kafka:spring-kafka'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.kafka:spring-kafka-test'
+}
+
+jib {
+	to {
+		image 'notifier:1.0.0-SNAPSHOT'
+	}
+	container {
+		ports = ["8080"]
+		jvmFlags = ['-Dspring.profiles.active=docker']
+	}
+}
+jar{
+	baseName = 'notifier'
+}
+test {
+	useJUnitPlatform()
+}
